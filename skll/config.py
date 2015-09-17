@@ -502,9 +502,6 @@ def _parse_config_file(config_path):
     if task == 'train' and prediction_dir:
         raise ValueError('The predictions path should not be set when task is '
                          'train.')
-    if task == 'cross_validate' and model_path:
-        raise ValueError('The models path should not be set when task is '
-                         'cross_validate.')
 
     # Create feature set names if unspecified
     if not featureset_names:

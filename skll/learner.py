@@ -1435,6 +1435,7 @@ class Learner(object):
         results = []
         grid_search_scores = []
         append_predictions = False
+        models = []
         for train_index, test_index in kfold:
             # Train model
             self._model = None  # prevent feature vectorizer from being reset.
@@ -1454,6 +1455,7 @@ class Learner(object):
                                            shuffle=grid_search,
                                            create_label_dict=False)
             grid_search_scores.append(grid_search_score)
+            models.append(self)
             # note: there is no need to shuffle again within each fold,
             # regardless of what the shuffle keyword argument is set to.
 
@@ -1470,4 +1472,4 @@ class Learner(object):
             append_predictions = True
 
         # return list of results for all folds
-        return results, grid_search_scores
+        return results, grid_search_scores, models
