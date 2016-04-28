@@ -89,7 +89,7 @@ _DEFAULT_PARAM_GRIDS = {AdaBoostClassifier:
                         LogisticRegression:
                         [{'C': [0.01, 0.1, 1.0, 10.0, 100.0]}],
                         SVC: [{'C': [0.01, 0.1, 1.0, 10.0, 100.0],
-                               'gamma': [0.01, 0.1, 1.0, 10.0, 100.0]}],
+                               'gamma': ['auto', 0.01, 0.1, 1.0, 10.0, 100.0]}],
                         MultinomialNB:
                         [{'alpha': [0.1, 0.25, 0.5, 0.75, 1.0]}],
                         RandomForestClassifier:
@@ -108,7 +108,7 @@ _DEFAULT_PARAM_GRIDS = {AdaBoostClassifier:
                         [{'C': [0.01, 0.1, 1.0, 10.0, 100.0]}],
                         SVR:
                         [{'C': [0.01, 0.1, 1.0, 10.0, 100.0],
-                          'gamma': [0.01, 0.1, 1.0, 10.0, 100.0]}]}
+                          'gamma': ['auto', 0.01, 0.1, 1.0, 10.0, 100.0]}]}
 
 
 # list of valid grid objective functions for regression and classification
@@ -321,6 +321,8 @@ def rescaled(cls):
             self.yhat_sd = np.std(y_hat)
             self.y_mean = np.mean(y)
             self.y_sd = np.std(y)
+
+        return self
 
     @wraps(cls.predict)
     def predict(self, X):
@@ -1410,7 +1412,7 @@ class Learner(object):
                  if save_cv_folds is True, otherwise None.
         :rtype: (list of 4-tuples, list of float, dict)
         """
-        
+
         # Seed the random number generator so that randomized algorithms are
         # replicable.
         random_state = np.random.RandomState(123456789)
@@ -1445,7 +1447,7 @@ class Learner(object):
             stratified = (stratified and
                           self.model_type._estimator_type == 'classifier')
             if stratified:
-                kfold = StratifiedKFold(examples.labels, n_folds=cv_folds)   
+                kfold = StratifiedKFold(examples.labels, n_folds=cv_folds)
             else:
                 kfold = KFold(len(examples.labels),
                               n_folds=cv_folds,
