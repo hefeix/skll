@@ -234,7 +234,7 @@ def test_retrieve_cv_folds():
                          'EXAMPLE_7': '0',
                          'EXAMPLE_8': '4', 
                          'EXAMPLE_9': '3'}
-    _, _, skll_fold_ids = learner.cross_validate(cv_fs, 
+    _, _, skll_fold_ids, _ = learner.cross_validate(cv_fs,
                                                  stratified=True,
                                                  cv_folds=num_folds,
                                                  grid_search=True, 
@@ -243,7 +243,7 @@ def test_retrieve_cv_folds():
     assert_equal(skll_fold_ids, expected_fold_ids)
 
     # Test 2: if we pass in custom fold ids, those are also preserved.
-    _, _, skll_fold_ids = learner.cross_validate(cv_fs, 
+    _, _, skll_fold_ids, _ = learner.cross_validate(cv_fs,
                                                  stratified=True,
                                                  cv_folds=custom_cv_folds, 
                                                  grid_search=True,
@@ -263,7 +263,7 @@ def test_retrieve_cv_folds():
                          'EXAMPLE_7': '3',
                          'EXAMPLE_8': '4', 
                          'EXAMPLE_9': '4'} 
-    _, _, skll_fold_ids = learner.cross_validate(cv_fs,  
+    _, _, skll_fold_ids, _ = learner.cross_validate(cv_fs,
                                                  stratified=False,
                                                  cv_folds=num_folds, 
                                                  grid_search=False,
