@@ -443,6 +443,8 @@ class LibSVMReader(Reader):
     def _sub_read(self, f):
         for example_num, line in enumerate(f):
             curr_id = ''
+            label_map = None
+            feat_map = None
             # Decode line if it's not already str
             if isinstance(line, bytes):
                 line = UnicodeDammit(line, ['utf-8',

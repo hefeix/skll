@@ -19,7 +19,7 @@ import numpy as np
 import os
 import sys
 from collections import defaultdict
-from io import open
+# from io import open
 from itertools import combinations
 from os.path import basename, exists, isfile, join
 

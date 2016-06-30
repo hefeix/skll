@@ -123,7 +123,8 @@ class SKLLConfigParser(configparser.ConfigParser):
         # section mapping dictionary have the same keys
         assert defaults.keys() == correct_section_mapping.keys()
 
-        super(SKLLConfigParser, self).__init__(defaults=defaults)
+        # super(SKLLConfigParser, self).__init__(defaults=defaults)
+        configparser.ConfigParser.__init__(self, defaults=defaults)
         self._required_options = required
         self._section_mapping = correct_section_mapping
 
@@ -202,12 +203,15 @@ class SKLLConfigParser(configparser.ConfigParser):
                                                   incorrectly_specified_options]))
 
 
-def _locate_file(file_path, config_dir):
+def _locate_file(file_path, config_dir, create_if_not_exists=False):
     if not file_path:
         return ''
     path_to_check = file_path if isabs(file_path) else normpath(join(config_dir,
                                                                      file_path))
     ans = exists(path_to_check)
+    if not ans and create_if_not_exists:
+        os.makedirs(path_to_check)
+        ans = exists(path_to_check)
     if not ans:
         raise IOError(errno.ENOENT, "File does not exist", path_to_check)
     else:
@@ -479,27 +483,30 @@ def _parse_config_file(config_path):
 
     # do we want to keep the predictions?
     prediction_dir = _locate_file(config.get("Output", "predictions"),
-                                  config_dir)
+                                  config_dir, create_if_not_exists=True)
     if prediction_dir:
         if not exists(prediction_dir):
             os.makedirs(prediction_dir)
 
     # make sure log path exists
-    log_path = _locate_file(config.get("Output", "log"), config_dir)
+    log_path = _locate_file(config.get("Output", "log"), config_dir,
+                            create_if_not_exists=True)
     if log_path:
         log_path = join(config_dir, log_path)
         if not exists(log_path):
             os.makedirs(log_path)
 
     # make sure model path exists
-    model_path = _locate_file(config.get("Output", "models"), config_dir)
+    model_path = _locate_file(config.get("Output", "models"), config_dir,
+                              create_if_not_exists=True)
     if model_path:
         model_path = join(config_dir, model_path)
         if not exists(model_path):
             os.makedirs(model_path)
 
     # make sure results path exists
-    results_path = _locate_file(config.get("Output", "results"), config_dir)
+    results_path = _locate_file(config.get("Output", "results"), config_dir,
+                                create_if_not_exists=True)
     if results_path:
         results_path = join(config_dir, results_path)
         if not exists(results_path):
