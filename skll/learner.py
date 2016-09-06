@@ -57,6 +57,12 @@ from skll.data import FeatureSet
 from skll.metrics import _CORRELATION_METRICS, use_score_func
 from skll.version import VERSION
 
+_HAS_XGBOOST = False
+try:
+    from xgboost.sklearn import XGBClassifier, XGBRegressor
+    _HAS_XGBOOST = True
+except ImportError:
+    _HAS_XGBOOST = False
 
 # Constants #
 _DEFAULT_PARAM_GRIDS = {AdaBoostClassifier:
@@ -109,6 +115,14 @@ _DEFAULT_PARAM_GRIDS = {AdaBoostClassifier:
                         [{'C': [0.01, 0.1, 1.0, 10.0, 100.0],
                           'gamma': ['auto', 0.01, 0.1, 1.0, 10.0, 100.0]}]}
 
+if _HAS_XGBOOST:
+    _DEFAULT_PARAM_GRIDS[XGBClassifier] = [
+        {
+            'max_depth': [5, 10, 20, 50, 100],
+            'learning_rate': [0.001, 0.01, 0.1, 1, 2, 5, 10],
+            'n_estimators': [1, 10, 20, 50, 100, 200],
+        }
+    ]
 
 # list of valid grid objective functions for regression and classification
 # models depending on type of labels
@@ -579,6 +593,9 @@ class Learner(object):
                        AdaBoostRegressor, AdaBoostClassifier, LinearSVR,
                        Lasso, Ridge, ElasticNet, SVC)):
             self._model_kwargs['random_state'] = 123456789
+
+        if _HAS_XGBOOST and issubclass(self._model_type, (XGBClassifier,)):
+            self._model_kwargs['seed'] = 123456789
 
         if sampler_kwargs:
             self._sampler_kwargs.update(sampler_kwargs)
